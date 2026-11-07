@@ -7,7 +7,7 @@ The model is an illustration of quantity-theory arithmetic (`MV = PQ`) with an a
 ## Pages
 
 - `/` — region, scenario presets, sliders, playhead, charts
-- `/analysis` — the conversation, MMT, quantity theory, Cantillon effects, objections
+- `/analysis` — the mechanism, MMT, quantity theory, Cantillon effects, objections
 - `/models` — what each economy did with money since 2000
 
 ## Source map
