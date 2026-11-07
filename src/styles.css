@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,640&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #102029;
+  --color-paper: #f3eee4;
+  --color-paper-2: #e7e0d2;
+  --color-brass: #8d6a2a;
+  --color-brass-bright: #c4a15a;
+  --color-signal: #b23a2f;
+  --color-teal: #1d6b66;
+  --color-muted: #5c6b73;
+  --color-line: #d4cbbd;
+  --color-surface: #faf7f1;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    background:
+      radial-gradient(1200px 500px at 90% -10%, color-mix(in oklab, var(--color-brass-bright) 22%, transparent), transparent 60%),
+      var(--color-paper);
+    min-height: 100%;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
