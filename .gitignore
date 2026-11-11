@@ -1,3 +1,12 @@
+node_modules
+.vercel
+.grok
+screenshots
+dist
+*.log
+.DS_Store
+.env
+.env.*
 artifacts
 .project_id
 .node_modules.lock
