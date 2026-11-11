@@ -11,7 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as EpisodesRouteImport } from './routes/episodes'
 import { Route as ModelsRouteImport } from './routes/models'
+import { Route as RuRouteRouteImport } from './routes/ru/route'
+import { Route as RuIndexRouteImport } from './routes/ru/index'
+import { Route as RuAnalysisRouteImport } from './routes/ru/analysis'
+import { Route as RuEpisodesRouteImport } from './routes/ru/episodes'
+import { Route as RuModelsRouteImport } from './routes/ru/models'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +29,115 @@ const AnalysisRoute = AnalysisRouteImport.update({
   path: '/analysis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EpisodesRoute = EpisodesRouteImport.update({
+  id: '/episodes',
+  path: '/episodes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModelsRoute = ModelsRouteImport.update({
   id: '/models',
   path: '/models',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RuRouteRoute = RuRouteRouteImport.update({
+  id: '/ru',
+  path: '/ru',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RuIndexRoute = RuIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RuRouteRoute,
+} as any)
+const RuAnalysisRoute = RuAnalysisRouteImport.update({
+  id: '/analysis',
+  path: '/analysis',
+  getParentRoute: () => RuRouteRoute,
+} as any)
+const RuEpisodesRoute = RuEpisodesRouteImport.update({
+  id: '/episodes',
+  path: '/episodes',
+  getParentRoute: () => RuRouteRoute,
+} as any)
+const RuModelsRoute = RuModelsRouteImport.update({
+  id: '/models',
+  path: '/models',
+  getParentRoute: () => RuRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ru': typeof RuRouteRouteWithChildren
   '/analysis': typeof AnalysisRoute
+  '/episodes': typeof EpisodesRoute
   '/models': typeof ModelsRoute
+  '/ru/analysis': typeof RuAnalysisRoute
+  '/ru/episodes': typeof RuEpisodesRoute
+  '/ru/models': typeof RuModelsRoute
+  '/ru/': typeof RuIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analysis': typeof AnalysisRoute
+  '/episodes': typeof EpisodesRoute
   '/models': typeof ModelsRoute
+  '/ru/analysis': typeof RuAnalysisRoute
+  '/ru/episodes': typeof RuEpisodesRoute
+  '/ru/models': typeof RuModelsRoute
+  '/ru': typeof RuIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ru': typeof RuRouteRouteWithChildren
   '/analysis': typeof AnalysisRoute
+  '/episodes': typeof EpisodesRoute
   '/models': typeof ModelsRoute
+  '/ru/analysis': typeof RuAnalysisRoute
+  '/ru/episodes': typeof RuEpisodesRoute
+  '/ru/models': typeof RuModelsRoute
+  '/ru/': typeof RuIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analysis' | '/models'
+  fullPaths:
+    | '/'
+    | '/ru'
+    | '/analysis'
+    | '/episodes'
+    | '/models'
+    | '/ru/analysis'
+    | '/ru/episodes'
+    | '/ru/models'
+    | '/ru/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analysis' | '/models'
-  id: '__root__' | '/' | '/analysis' | '/models'
+  to:
+    | '/'
+    | '/analysis'
+    | '/episodes'
+    | '/models'
+    | '/ru/analysis'
+    | '/ru/episodes'
+    | '/ru/models'
+    | '/ru'
+  id:
+    | '__root__'
+    | '/'
+    | '/ru'
+    | '/analysis'
+    | '/episodes'
+    | '/models'
+    | '/ru/analysis'
+    | '/ru/episodes'
+    | '/ru/models'
+    | '/ru/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RuRouteRoute: typeof RuRouteRouteWithChildren
   AnalysisRoute: typeof AnalysisRoute
+  EpisodesRoute: typeof EpisodesRoute
   ModelsRoute: typeof ModelsRoute
 }
 
@@ -75,6 +157,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalysisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/episodes': {
+      id: '/episodes'
+      path: '/episodes'
+      fullPath: '/episodes'
+      preLoaderRoute: typeof EpisodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/models': {
       id: '/models'
       path: '/models'
@@ -82,12 +171,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ru': {
+      id: '/ru'
+      path: '/ru'
+      fullPath: '/ru'
+      preLoaderRoute: typeof RuRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ru/': {
+      id: '/ru/'
+      path: '/'
+      fullPath: '/ru/'
+      preLoaderRoute: typeof RuIndexRouteImport
+      parentRoute: typeof RuRouteRoute
+    }
+    '/ru/analysis': {
+      id: '/ru/analysis'
+      path: '/analysis'
+      fullPath: '/ru/analysis'
+      preLoaderRoute: typeof RuAnalysisRouteImport
+      parentRoute: typeof RuRouteRoute
+    }
+    '/ru/episodes': {
+      id: '/ru/episodes'
+      path: '/episodes'
+      fullPath: '/ru/episodes'
+      preLoaderRoute: typeof RuEpisodesRouteImport
+      parentRoute: typeof RuRouteRoute
+    }
+    '/ru/models': {
+      id: '/ru/models'
+      path: '/models'
+      fullPath: '/ru/models'
+      preLoaderRoute: typeof RuModelsRouteImport
+      parentRoute: typeof RuRouteRoute
+    }
   }
 }
 
+interface RuRouteRouteChildren {
+  RuAnalysisRoute: typeof RuAnalysisRoute
+  RuEpisodesRoute: typeof RuEpisodesRoute
+  RuModelsRoute: typeof RuModelsRoute
+  RuIndexRoute: typeof RuIndexRoute
+}
+
+const RuRouteRouteChildren: RuRouteRouteChildren = {
+  RuAnalysisRoute: RuAnalysisRoute,
+  RuEpisodesRoute: RuEpisodesRoute,
+  RuModelsRoute: RuModelsRoute,
+  RuIndexRoute: RuIndexRoute,
+}
+
+const RuRouteRouteWithChildren =
+  RuRouteRoute._addFileChildren(RuRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RuRouteRoute: RuRouteRouteWithChildren,
   AnalysisRoute: AnalysisRoute,
+  EpisodesRoute: EpisodesRoute,
   ModelsRoute: ModelsRoute,
 }
 export const routeTree = rootRouteImport

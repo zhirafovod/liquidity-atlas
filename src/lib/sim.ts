@@ -20,37 +20,17 @@ export type Point = {
   realWage: number;
 };
 
-export const REGIONS: {
-  id: RegionId;
-  name: string;
-  blurb: string;
-  sink: string;
-}[] = [
-  {
-    id: "usa",
-    name: "США",
-    blurb: "Глубокие фондовые рынки впитывают большую долю новых денег ещё до кассы.",
-    sink: "Акции и жильё",
-  },
-  {
-    id: "russia",
-    name: "Россия",
-    blurb: "Мелкие рынки капитала. Лишние рубли бьют по квартирам, стройке, потом по ценам в магазине.",
-    sink: "Недвижимость",
-  },
-  {
-    id: "europe",
-    name: "Европа",
-    blurb: "QE и миграция извне вместе расширяют спрос и рабочую силу.",
-    sink: "Жильё и облигации",
-  },
-  {
-    id: "china",
-    name: "Китай",
-    blurb: "Очень быстрый рост денег, в основном в недвижимости и инвестициях, пока не упирается в мощности.",
-    sink: "Недвижимость",
-  },
-];
+export type Mechanics = {
+  year: number;
+  output: number;
+  demand: number;
+  pressure: number;
+  cpi: number;
+  asset: number;
+  aiOn: boolean;
+};
+
+export const REGION_IDS: RegionId[] = ["usa", "russia", "europe", "china"];
 
 export const BASELINES: Record<RegionId, Params> = {
   usa: {
@@ -87,38 +67,13 @@ export const BASELINES: Record<RegionId, Params> = {
   },
 };
 
-export const PRESETS: { id: string; label: string; hint: string; patch: Partial<Params> }[] = [
-  { id: "path", label: "Базовый путь", hint: "Характер каждого региона после 2000 года", patch: {} },
-  {
-    id: "print",
-    label: "Открыть станок",
-    hint: "Быстрее деньги, сильнее фискальный импульс",
-    patch: { moneyGrowth: 14, fiscalImpulse: 6 },
-  },
-  {
-    id: "ai",
-    label: "ИИ и производительность",
-    hint: "Роботы поднимают реальный выпуск после 2020",
-    patch: { aiBoost: 3.4, productivity: 2.4 },
-  },
-  {
-    id: "sink",
-    label: "Глубокий сток",
-    hint: "Почти вся лишняя ликвидность остаётся в активах",
-    patch: { absorption: 0.9 },
-  },
-  {
-    id: "goods",
-    label: "Нет финансового стока",
-    hint: "Новые деньги торгуются за еду и аренду",
-    patch: { absorption: 0.08 },
-  },
-  {
-    id: "people",
-    label: "Всплеск миграции",
-    hint: "Больше потребителей и больше работников",
-    patch: { immigration: 1.4 },
-  },
+export const PRESET_PATCHES: { id: string; patch: Partial<Params> }[] = [
+  { id: "path", patch: {} },
+  { id: "print", patch: { moneyGrowth: 14, fiscalImpulse: 6 } },
+  { id: "ai", patch: { aiBoost: 3.4, productivity: 2.4 } },
+  { id: "sink", patch: { absorption: 0.9 } },
+  { id: "goods", patch: { absorption: 0.08 } },
+  { id: "people", patch: { immigration: 1.4 } },
 ];
 
 function clamp(n: number, lo: number, hi: number) {
@@ -129,7 +84,19 @@ function round1(n: number) {
   return Math.round(n * 10) / 10;
 }
 
-/** Illustrative replay of MV = PQ with an asset-absorption share. Not a forecast. */
+/** One year of the illustrative rule. Rates are decimals. Not a forecast. */
+export function mechanics(params: Params, year: number): Mechanics {
+  const aiOn = year >= 2020;
+  const output = (params.productivity + (aiOn ? params.aiBoost : 0)) / 100;
+  const people = params.immigration / 100;
+  const demand = params.moneyGrowth / 100 + (params.fiscalImpulse / 100) * 0.55 + people * 0.28;
+  const capacity = output + people * 0.22;
+  const pressure = demand - capacity;
+  const cpi = clamp(pressure * (1 - params.absorption) * 100, -2, 28);
+  const asset = pressure * params.absorption * 130 + Math.max(0, cpi) * 0.22;
+  return { year, output: output * 100, demand: demand * 100, pressure: pressure * 100, cpi, asset, aiOn };
+}
+
 export function simulate(params: Params): Point[] {
   const points: Point[] = [];
   let money = 100;
@@ -140,26 +107,22 @@ export function simulate(params: Params): Point[] {
   let wage = 100;
 
   for (let year = 1990; year <= 2050; year++) {
-    const ai = year >= 2020 ? params.aiBoost : 0;
-    const gQ = (params.productivity + ai) / 100;
+    const m = mechanics(params, year);
+    const gQ = m.output / 100;
     const gPop = params.immigration / 100;
     const gM = params.moneyGrowth / 100;
     const fiscal = params.fiscalImpulse / 100;
-    const capacity = gQ + gPop * 0.22;
-    const pressure = gM + fiscal * 0.55 + gPop * 0.28 - capacity;
-    const cpi = clamp(pressure * (1 - params.absorption) * 100, -2, 28);
-    const asset = pressure * params.absorption * 130 + Math.max(0, cpi) * 0.22;
 
     money *= 1 + gM;
     gdp *= 1 + gQ + gPop * 0.2;
-    stock *= 1 + asset / 100;
-    housing *= 1 + (asset * 0.72 + Math.max(0, cpi) * 0.55) / 100;
-    wage *= 1 + gQ * 0.55 - Math.max(0, cpi) / 100 * 0.35;
+    stock *= 1 + m.asset / 100;
+    housing *= 1 + (m.asset * 0.72 + Math.max(0, m.cpi) * 0.55) / 100;
+    wage *= 1 + gQ * 0.55 - (Math.max(0, m.cpi) / 100) * 0.35;
     debt = debt * (1 + Math.max(-0.02, gM * 0.42 + fiscal * 0.15 - gQ * 0.25)) + fiscal * 8;
 
     points.push({
       year,
-      cpi: round1(cpi),
+      cpi: round1(m.cpi),
       stock: round1(stock),
       housing: round1(housing),
       gdp: round1(gdp),

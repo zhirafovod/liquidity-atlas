@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grok.me Economy Simulator: Russia, USA, Europe, China 1990-2050</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 1200px; margin: auto; padding: 20px; background: #f5f7fa; }
+        h1 { color: #1a365d; text-align: center; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .tab { padding: 10px 20px; background: #e2e8f0; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .tab.active { background: #2b6cb0; color: white; }
+        .controls { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .slider-group { margin: 10px 0; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type=range] { width: 100%; }
+        .value { color: #2b6cb0; font-weight: bold; }
+        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        canvas { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { margin: 0 15px; color: #2b6cb0; text-decoration: none; font-weight: bold; }
+        .info { background: #ebf8ff; padding: 15px; border-radius: 8px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Interactive Economy Simulator: 1990 → 2050</h1>
+    <p style="text-align:center;">Tweak parameters independently for Russia / USA / Europe / China. Replay scenarios testing money printing, stock market sinks, productivity (AI), immigration, etc.</p>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="switchCountry('usa')">USA</button>
+        <button class="tab" onclick="switchCountry('russia')">Russia</button>
+        <button class="tab" onclick="switchCountry('europe')">Europe</button>
+        <button class="tab" onclick="switchCountry('china')">China</button>
+    </div>
+
+    <div class="controls">
+        <h3>Parameters for <span id="countryName">USA</span></h3>
+        <div class="slider-group">
+            <label>Money Growth Rate (%/year): <span class="value" id="moneyVal">6</span></label>
+            <input type="range" id="moneyGrowth" min="0" max="20" value="6" step="0.5" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+            <label>AI/Productivity Boost (% extra post-2020): <span class="value" id="aiVal">1</span></label>
+            <input type="range" id="aiBoost" min="0" max="5" value="1" step="0.1" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+            <label>Net Immigration Rate (% pop/year): <span class="value" id="immVal">0.5</span></label>
+            <input type="range" id="immigration" min="0" max="2" value="0.5" step="0.1" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+            <label>Financial Absorption Capacity (0=goods, 1=assets): <span class="value" id="absVal">0.7</span></label>
+            <input type="range" id="absorption" min="0" max="1" value="0.7" step="0.05" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+            <label>Base Productivity Growth (%/year): <span class="value" id="prodVal">2</span></label>
+            <input type="range" id="prodGrowth" min="0" max="5" value="2" step="0.1" oninput="updateSim()">
+        </div>
+        <div class="info">
+            High absorption (deep stock markets) → more asset inflation, less CPI (Ilya's "sink"). Low absorption (like Russia) → faster goods/RE inflation. AI boost increases real output Q, allowing more money without inflation. Immigration boosts demand and labor supply.
+        </div>
+    </div>
+
+    <div class="charts">
+        <div><canvas id="inflationChart"></canvas></div>
+        <div><canvas id="assetsChart"></canvas></div>
+        <div><canvas id="gdpChart"></canvas></div>
+        <div><canvas id="debtChart"></canvas></div>
+    </div>
+
+    <div class="nav">
+        <a href="analysis.html">Theory & Conversation Analysis</a> |
+        <a href="models.html">Country Models & Data since 2000</a>
+    </div>
+
+    <script>
+        let currentCountry = 'usa';
+        const countries = {
+            usa: { name: 'USA', baseAbs: 0.75, baseMoney: 6, baseImm: 0.4, baseProd: 2.0 },
+            russia: { name: 'Russia', baseAbs: 0.3, baseMoney: 12, baseImm: 0.2, baseProd: 1.5 },
+            europe: { name: 'Europe', baseAbs: 0.6, baseMoney: 5, baseImm: 0.6, baseProd: 1.2 },
+            china: { name: 'China', baseAbs: 0.5, baseMoney: 10, baseImm: 0.1, baseProd: 6.0 }
+        };
+
+        let charts = {};
+
+        function switchCountry(c) {
+            currentCountry = c;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('countryName').textContent = countries[c].name;
+            // Reset sliders to country baselines
+            document.getElementById('moneyGrowth').value = countries[c].baseMoney;
+            document.getElementById('absorption').value = countries[c].baseAbs;
+            document.getElementById('immigration').value = countries[c].baseImm;
+            document.getElementById('prodGrowth').value = countries[c].baseProd;
+            updateSim();
+        }
+
+        function updateSim() {
+            const moneyG = parseFloat(document.getElementById('moneyGrowth').value);
+            const aiB = parseFloat(document.getElementById('aiBoost').value);
+            const imm = parseFloat(document.getElementById('immigration').value);
+            const abs = parseFloat(document.getElementById('absorption').value);
+            const prod = parseFloat(document.getElementById('prodGrowth').value);
+
+            document.getElementById('moneyVal').textContent = moneyG;
+            document.getElementById('aiVal').textContent = aiB;
+            document.getElementById('immVal').textContent = imm;
+            document.getElementById('absVal').textContent = abs.toFixed(2);
+            document.getElementById('prodVal').textContent = prod;
+
+            const years = [];
+            const cpi = [];
+            const stocks = [];
+            const re = [];
+            const gdp = [];
+            const debt = [];
+
+            let M = 100, Q = 100, Debt = 50, Stock = 100, RE = 100, Pop = 100;
+            for (let y = 1990; y <= 2050; y++) {
+                years.push(y);
+                const aiExtra = y >= 2020 ? aiB : 0;
+                const deltaQ = (prod + aiExtra) / 100 * Q + (imm / 100 * Q * 0.5); // immigration boosts Q
+                const deltaM = moneyG / 100 * M;
+                const excess = Math.max(0, deltaM - deltaQ);
+                const goodsInfl = excess * (1 - abs) * 0.8 / Q * 100; // simplified transmission
+                const assetInfl = excess * abs * 1.2 / Q * 100 + (goodsInfl * 0.3); // assets get more + spillover
+
+                M += deltaM;
+                Q += deltaQ;
+                Pop *= (1 + imm / 100);
+                Stock *= (1 + assetInfl / 100);
+                RE *= (1 + (assetInfl * 0.8 + goodsInfl * 0.5) / 100);
+                const infl = Math.max(0, goodsInfl + Math.random() * 0.5 - 0.25); // noise
+                Debt += (moneyG * 0.3 - 2) + infl * 0.1; // simplified debt growth
+
+                cpi.push(Math.min(25, Math.max(-1, infl)));
+                stocks.push(Stock);
+                re.push(RE);
+                gdp.push(Q);
+                debt.push(Debt);
+            }
+
+            if (charts.infl) charts.infl.destroy();
+            if (charts.assets) charts.assets.destroy();
+            if (charts.gdp) charts.gdp.destroy();
+            if (charts.debt) charts.debt.destroy();
+
+            charts.infl = new Chart(document.getElementById('inflationChart'), {
+                type: 'line',
+                data: { labels: years, datasets: [{ label: 'CPI Inflation %', data: cpi, borderColor: 'red', fill: false }] },
+                options: { responsive: true, plugins: { title: { display: true, text: 'CPI Inflation' } } }
+            });
+
+            charts.assets = new Chart(document.getElementById('assetsChart'), {
+                type: 'line',
+                data: { labels: years, datasets: [
+                    { label: 'Stock Index', data: stocks, borderColor: 'blue', fill: false },
+                    { label: 'Real Estate Index', data: re, borderColor: 'green', fill: false }
+                ]},
+                options: { responsive: true, plugins: { title: { display: true, text: 'Asset Prices (Index)' } } }
+            });
+
+            charts.gdp = new Chart(document.getElementById('gdpChart'), {
+                type: 'line',
+                data: { labels: years, datasets: [{ label: 'Real GDP Index', data: gdp, borderColor: 'purple', fill: false }] },
+                options: { responsive: true, plugins: { title: { display: true, text: 'Real GDP' } } }
+            });
+
+            charts.debt = new Chart(document.getElementById('debtChart'), {
+                type: 'line',
+                data: { labels: years, datasets: [{ label: 'Debt Index', data: debt, borderColor: 'orange', fill: false }] },
+                options: { responsive: true, plugins: { title: { display: true, text: 'Debt Level' } } }
+            });
+        }
+
+        // Initial load
+        updateSim();
+    </script>
+</body>
+</html>
