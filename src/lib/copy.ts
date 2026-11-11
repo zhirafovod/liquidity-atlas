@@ -75,6 +75,14 @@ type Copy = {
     lesson: string;
     replay: string;
     source: string;
+    money: string;
+    prices: string;
+    housing: string;
+    chartTitle: string;
+    stories: string;
+    focus: string;
+    series: string;
+    method: string;
   };
 };
 
@@ -252,6 +260,15 @@ const en: Copy = {
     lesson: "What it does to the argument",
     replay: "Set the levers to this",
     source: "Source",
+    money: "Money",
+    prices: "Prices",
+    housing: "Housing",
+    chartTitle: "All four, on one scale",
+    stories: "What each country did in this window",
+    focus: "This episode",
+    series: "The series behind the bars",
+    method:
+      "One scale for all four. Each bar is the percent change over that episode’s window, not a year-on-year rate and not a level in local currency. Housing is the only asset on the same index in every country. Equities are left off: there is no comparable series. A missing bar means that series was not comparable on those dates. A bar below the line is a fall.",
   },
 };
 
@@ -429,6 +446,15 @@ const ru: Copy = {
     lesson: "Что это делает с аргументом",
     replay: "Поставить рычаги так",
     source: "Источник",
+    money: "Деньги",
+    prices: "Цены",
+    housing: "Жильё",
+    chartTitle: "Все четыре, одна шкала",
+    stories: "Что было в каждой стране за это окно",
+    focus: "Этот эпизод",
+    series: "Ряды, из которых взяты столбцы",
+    method:
+      "Одна шкала на всех. Столбец — изменение в процентах за окно эпизода, не годовой прирост и не сумма в местной валюте. Из активов общий индекс есть только у жилья. Акции не нарисованы: сопоставимого ряда нет. Нет столбца — на эти даты ряд не сопоставим. Столбец ниже линии — это падение.",
   },
 };
 

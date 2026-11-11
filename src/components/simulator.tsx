@@ -13,7 +13,9 @@ import {
 import { EPISODES } from "@/lib/episodes";
 import type { Locale } from "@/lib/locale";
 import { localize } from "@/lib/locale";
+import { EpisodeChart } from "@/components/episode-chart";
 import { t } from "@/lib/copy";
+import { compareFor } from "@/lib/episode-compare";
 import { PALETTE } from "@/lib/palette";
 import {
   BASELINES,
@@ -70,6 +72,7 @@ export function Simulator({ locale }: { locale: Locale }) {
   const meta = copy.regions[region];
   const mech = mechanics(params, year);
   const episode = EPISODES.find((e) => e.id === episodeId);
+  const compare = episode ? compareFor(episode.id) : undefined;
 
   function applyEpisode(id: string, push: boolean) {
     const found = EPISODES.find((e) => e.id === id);
@@ -252,6 +255,36 @@ export function Simulator({ locale }: { locale: Locale }) {
           {episode ? <p className="mt-2 text-sm leading-snug text-paper/80">{sentence}</p> : null}
           {!mech.aiOn ? <p className="mt-2 text-sm text-brass">{s.aiOff}</p> : null}
         </div>
+
+        {episode && compare ? (
+          <div className="rounded-2xl border border-line bg-surface p-4">
+            <p className="text-xs font-semibold tracking-widest text-brass uppercase">{copy.episodesPage.chartTitle}</p>
+            <EpisodeChart
+              row={compare}
+              locale={locale}
+              names={{
+                usa: locale === "ru" ? "США" : "US",
+                europe: copy.regions.europe.name,
+                russia: copy.regions.russia.name,
+                china: copy.regions.china.name,
+              }}
+              labels={{
+                money: copy.episodesPage.money,
+                prices: copy.episodesPage.prices,
+                housing: copy.episodesPage.housing,
+              }}
+            />
+            <p className="mt-3 text-sm text-muted">{compare.note[locale]}</p>
+            <p className="mt-3">
+              <a
+                className="text-sm font-semibold text-teal underline-offset-2 hover:underline"
+                href={`${localize(locale, "/episodes")}#${episode.id}`}
+              >
+                {copy.episodesPage.stories}
+              </a>
+            </p>
+          </div>
+        ) : null}
 
         <div className="rounded-2xl border border-line bg-surface p-4">
           <div className="flex items-baseline justify-between gap-3 text-sm">
