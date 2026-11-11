@@ -4,45 +4,45 @@ export const Route = createFileRoute("/models")({ component: Models });
 
 const BLOCKS = [
   {
-    name: "United States",
-    sink: "Equities, then houses",
+    name: "США",
+    sink: "Сначала акции, потом дома",
     rows: [
-      ["Broad money", "About $4.7T in 2000, $15.5T in early 2020, a jump past $21T by 2022, near $23T later."],
-      ["Consumer prices", "Mostly 1–2% through the QE years, then a spike near 9% in 2022."],
-      ["Assets", "The S&P and Case-Shiller both ran far ahead of the basket. Post-2020 housing jumped hard."],
-      ["The Fed", "Zero rates and three QE rounds, a pandemic blast of purchases plus fiscal checks, then a fast hiking cycle."],
-      ["People", "Immigration lifts headcount and spending, which lets more money exist per existing resident — and bids for housing."],
+      ["Широкие деньги", "Около $4,7 трлн в 2000, $15,5 трлн в начале 2020, скачок за $21 трлн к 2022, затем около $23 трлн."],
+      ["Потребительские цены", "В годы QE в основном 1–2%, затем пик около 9% в 2022."],
+      ["Активы", "S&P и Case-Shiller далеко обогнали корзину. После 2020 жильё прыгнуло сильно."],
+      ["ФРС", "Нулевые ставки и три раунда QE, пандемийные покупки плюс чеки, затем быстрый цикл повышения."],
+      ["Люди", "Иммиграция растит численность и расходы: денег на уже живущего становится больше — и ставки на жильё тоже."],
     ],
   },
   {
-    name: "Russia",
-    sink: "Apartments",
+    name: "Россия",
+    sink: "Квартиры",
     rows: [
-      ["Broad money", "Long stretches of double-digit growth. The ruble aggregate kept expanding through the 2020s."],
-      ["Consumer prices", "A 4% target after the 2014 float, then renewed high single digits and worse when fiscal policy dominated."],
-      ["Assets", "Secondary housing rose many times over in nominal rubles. Preferential mortgages were the policy sink."],
-      ["The Bank of Russia", "Inflation targeting, a free float, then very high policy rates and capital controls."],
-      ["Why it differs", "Without a deep equity market, the same injection reaches construction and the shop faster."],
+      ["Широкие деньги", "Долгие отрезки двузначного роста. Рублёвый агрегат продолжал расширяться в 2020-е."],
+      ["Потребительские цены", "Цель 4% после плавания 2014, затем снова высокие единицы и хуже, когда правила фискальная политика."],
+      ["Активы", "Вторичное жильё выросло в разы в номинальных рублях. Льготная ипотека была политическим стоком."],
+      ["Банк России", "Таргетирование инфляции, свободное плавание, затем очень высокая ключевая ставка и контроль капитала."],
+      ["В чём отличие", "Без глубокого рынка акций та же инъекция быстрее доходит до стройки и магазина."],
     ],
   },
   {
-    name: "Europe",
-    sink: "Housing and sovereign bonds",
+    name: "Европа",
+    sink: "Жильё и гособлигации",
     rows: [
-      ["Money", "Steady M3 growth and a balance sheet swollen by APP and the pandemic programme."],
-      ["Consumer prices", "A long quiet period, then an energy-plus-money spike toward 10%."],
-      ["The ECB", "Negative deposit rates, large-scale purchases, then hikes. Periphery debt stayed a political fact."],
-      ["People", "Migration from outside the union added workers and consumers, which cushioned wages and strained rent."],
+      ["Деньги", "Ровный рост M3 и баланс, раздутый APP и пандемийной программой."],
+      ["Потребительские цены", "Долгая тишина, затем скачок к 10% от энергии плюс денег."],
+      ["ЕЦБ", "Отрицательная ставка по депозитам, крупные покупки, затем повышения. Долг периферии остался политическим фактом."],
+      ["Люди", "Миграция извне союза добавила работников и потребителей: зарплаты смягчились, аренда напряглась."],
     ],
   },
   {
-    name: "China",
-    sink: "Property and investment",
+    name: "Китай",
+    sink: "Недвижимость и инвестиции",
     rows: [
-      ["Broad money", "The largest stock in the world, growing much faster than US money for most of the period, slower recently."],
-      ["Consumer prices", "Often subdued, and at times close to deflation, even while money was abundant."],
-      ["Property", "A multi-decade boom that became a large share of activity, then a long correction."],
-      ["The PBOC", "Reserve-ratio cuts, relending, mortgage relief. More rate-based tools, still heavy quantitative habits."],
+      ["Широкие деньги", "Крупнейший запас в мире: большую часть периода рос быстрее американского, недавно медленнее."],
+      ["Потребительские цены", "Часто сдержанные, временами близко к дефляции, даже когда денег было много."],
+      ["Недвижимость", "Бум на десятилетия, ставший большой долей активности, затем долгая коррекция."],
+      ["НБК", "Снижения нормы резервов, рефинансирование, послабления по ипотеке. Больше ставочных инструментов, но количественные привычки сильны."],
     ],
   },
 ];
@@ -50,11 +50,11 @@ const BLOCKS = [
 function Models() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
-      <p className="text-xs font-semibold tracking-widest text-brass uppercase">Since 2000</p>
-      <h1 className="mt-1 font-display text-4xl text-ink">Four money markets, four sinks.</h1>
+      <p className="text-xs font-semibold tracking-widest text-brass uppercase">С 2000 года</p>
+      <h1 className="mt-1 font-display text-4xl text-ink">Четыре денежных рынка, четыре стока.</h1>
       <p className="mt-4 text-lg text-muted">
-        Same arithmetic, different plumbing. Figures are orders of magnitude from public series (central banks, FRED,
-        World Bank), not a live feed. The replay uses these characters as baselines you can break.
+        Та же арифметика, разная сантехника. Цифры — порядки величин из открытых рядов (центробанки, FRED, Всемирный
+        банк), не живая лента. Прогон берёт эти характеры как базовые пути, которые можно сломать.
       </p>
 
       <div className="mt-8 flex flex-col gap-6">
@@ -77,25 +77,26 @@ function Models() {
       </div>
 
       <section className="mt-8 space-y-3">
-        <h2 className="font-display text-2xl">Shared mechanics</h2>
+        <h2 className="font-display text-2xl">Общая механика</h2>
         <p>
-          Money growth above real output has to land somewhere. A deep market (US equities) soaks it as asset
-          inflation. A property-heavy market (China, and Russia’s subsidized mortgages) soaks it as houses until the
-          stock of unsold floors or angry buyers forces a stop. Immigration is a demand tool and a labor tool at once:
-          more consumption, which justifies more money, and more workers, which raises capacity. Subsidies — checks,
-          cheap mortgages, benefits paid to people who just arrived — pull that demand forward.
+          Рост денег выше реального выпуска должен куда-то сесть. Глубокий рынок (акции США) впитывает его как
+          инфляцию активов. Рынок, завязанный на недвижимость (Китай и льготная ипотека России), впитывает его домами,
+          пока запас нераспроданных метров или злые покупатели не ставят точку. Иммиграция сразу и инструмент спроса, и
+          инструмент труда: больше потребления, которое оправдывает больше денег, и больше работников, которые
+          поднимают мощности. Субсидии — чеки, дешёвая ипотека, пособия тем, кто только приехал — вытягивают этот спрос
+          вперёд.
         </p>
         <p>
-          Inflation is the indirect tax: it shrinks the real value of cash and of fixed nominal claims. A direct tax
-          deletes money outright. Social spending does the opposite unless taxes rise with it. Illegal or irregular
-          migration on those benefits is the same fiscal impulse with a different passport: consumption up, public
-          balance sheet wider, housing tighter.
+          Инфляция — косвенный налог: она сжимает реальную стоимость наличных и фиксированных номинальных требований.
+          Прямой налог уничтожает деньги сразу. Социальные расходы делают обратное, если налоги не растут вместе с
+          ними. Нелегальная или нерегулярная миграция на этих пособиях — тот же фискальный импульс с другим паспортом:
+          потребление вверх, публичный баланс шире, жильё теснее.
         </p>
       </section>
 
       <p className="mt-8">
         <Link to="/" className="font-semibold text-teal underline-offset-2 hover:underline">
-          Open the replay
+          Открыть прогон
         </Link>
       </p>
     </main>

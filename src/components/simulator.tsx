@@ -21,12 +21,12 @@ import {
 } from "@/lib/sim";
 
 const FIELDS: { key: keyof Params; label: string; min: number; max: number; step: number; unit: string }[] = [
-  { key: "moneyGrowth", label: "Money growth", min: 0, max: 22, step: 0.1, unit: "% / year" },
-  { key: "productivity", label: "Productivity", min: 0, max: 8, step: 0.1, unit: "% / year" },
-  { key: "aiBoost", label: "AI boost after 2020", min: 0, max: 5, step: 0.1, unit: "extra pts" },
-  { key: "immigration", label: "Net migration", min: 0, max: 2, step: 0.05, unit: "% of pop" },
-  { key: "absorption", label: "Asset sink", min: 0, max: 1, step: 0.01, unit: "share of excess" },
-  { key: "fiscalImpulse", label: "Fiscal impulse", min: 0, max: 10, step: 0.1, unit: "stimulus" },
+  { key: "moneyGrowth", label: "Рост денег", min: 0, max: 22, step: 0.1, unit: "% в год" },
+  { key: "productivity", label: "Производительность", min: 0, max: 8, step: 0.1, unit: "% в год" },
+  { key: "aiBoost", label: "ИИ после 2020", min: 0, max: 5, step: 0.1, unit: "доп. п.п." },
+  { key: "immigration", label: "Чистая миграция", min: 0, max: 2, step: 0.05, unit: "% населения" },
+  { key: "absorption", label: "Сток в активы", min: 0, max: 1, step: 0.01, unit: "доля избытка" },
+  { key: "fiscalImpulse", label: "Фискальный импульс", min: 0, max: 10, step: 0.1, unit: "стимул" },
 ];
 
 export function Simulator() {
@@ -79,7 +79,7 @@ export function Simulator() {
     <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[320px_1fr]">
       <aside className="flex flex-col gap-4">
         <div>
-          <p className="text-xs font-semibold tracking-widest text-brass uppercase">Region</p>
+          <p className="text-xs font-semibold tracking-widest text-brass uppercase">Регион</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {REGIONS.map((r) => (
               <button
@@ -98,12 +98,12 @@ export function Simulator() {
           </div>
           <p className="mt-3 text-sm text-muted">{meta.blurb}</p>
           <p className="mt-1 text-sm">
-            Primary sink: <span className="font-semibold text-teal">{meta.sink}</span>
+            Основной сток: <span className="font-semibold text-teal">{meta.sink}</span>
           </p>
         </div>
 
         <div>
-          <p className="text-xs font-semibold tracking-widest text-brass uppercase">Scenarios</p>
+          <p className="text-xs font-semibold tracking-widest text-brass uppercase">Сценарии</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {PRESETS.map((p) => (
               <button
@@ -151,7 +151,7 @@ export function Simulator() {
         <div className="rounded-2xl border border-line bg-surface p-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold tracking-widest text-brass uppercase">Playhead</p>
+              <p className="text-xs font-semibold tracking-widest text-brass uppercase">Год</p>
               <p className="font-display text-5xl leading-none text-ink">{year}</p>
             </div>
             <div className="flex gap-2">
@@ -163,7 +163,7 @@ export function Simulator() {
                   setPlaying((v) => !v);
                 }}
               >
-                {playing ? "Pause" : year >= 2050 ? "Replay" : "Play"}
+                {playing ? "Пауза" : year >= 2050 ? "Заново" : "Играть"}
               </button>
               <button
                 type="button"
@@ -173,7 +173,7 @@ export function Simulator() {
                   setYear(1990);
                 }}
               >
-                Reset
+                Сброс
               </button>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function Simulator() {
               setPlaying(false);
               setYear(Number(e.target.value));
             }}
-            aria-label="Year"
+            aria-label="Год"
           />
           <div className="mt-1 flex justify-between text-xs text-muted">
             <span>1990</span>
@@ -198,25 +198,25 @@ export function Simulator() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="CPI this year" value={`${now.cpi.toFixed(1)}%`} tone={now.cpi > 6 ? "signal" : "ink"} />
-          <Stat label="Real GDP index" value={now.gdp.toFixed(0)} note={`from ${start.gdp.toFixed(0)}`} />
-          <Stat label="Stock index" value={now.stock.toFixed(0)} tone="teal" />
-          <Stat label="Housing index" value={now.housing.toFixed(0)} tone="brass" />
+          <Stat label="ИПЦ в этом году" value={`${now.cpi.toFixed(1)}%`} tone={now.cpi > 6 ? "signal" : "ink"} />
+          <Stat label="Реальный ВВП" value={now.gdp.toFixed(0)} note={`с ${start.gdp.toFixed(0)}`} />
+          <Stat label="Индекс акций" value={now.stock.toFixed(0)} tone="teal" />
+          <Stat label="Индекс жилья" value={now.housing.toFixed(0)} tone="brass" />
         </div>
 
-        <ChartCard title="Shop-price inflation">
+        <ChartCard title="Инфляция потребительских цен">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={visible} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid stroke={PALETTE.line} strokeDasharray="3 3" />
               <XAxis dataKey="year" tick={{ fill: PALETTE.muted, fontSize: 12 }} />
               <YAxis tick={{ fill: PALETTE.muted, fontSize: 12 }} width={36} unit="%" />
               <Tooltip />
-              <Line type="monotone" dataKey="cpi" name="CPI %" stroke={PALETTE.signal} dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="cpi" name="ИПЦ %" stroke={PALETTE.signal} dot={false} strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Where the money landed">
+        <ChartCard title="Куда осели деньги">
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={visible} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid stroke={PALETTE.line} strokeDasharray="3 3" />
@@ -224,14 +224,14 @@ export function Simulator() {
               <YAxis tick={{ fill: PALETTE.muted, fontSize: 12 }} width={48} />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="stock" name="Stocks" stroke={PALETTE.teal} dot={false} strokeWidth={2} />
-              <Line type="monotone" dataKey="housing" name="Housing" stroke={PALETTE.brass} dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="stock" name="Акции" stroke={PALETTE.teal} dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="housing" name="Жильё" stroke={PALETTE.brass} dot={false} strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <ChartCard title="Real output and broad money">
+          <ChartCard title="Реальный выпуск и широкие деньги">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={visible} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke={PALETTE.line} strokeDasharray="3 3" />
@@ -239,12 +239,12 @@ export function Simulator() {
                 <YAxis tick={{ fill: PALETTE.muted, fontSize: 12 }} width={44} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="gdp" name="Real GDP" stroke={PALETTE.ink} dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="money" name="Money" stroke={PALETTE.brass} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="gdp" name="Реальный ВВП" stroke={PALETTE.ink} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="money" name="Деньги" stroke={PALETTE.brass} dot={false} strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
-          <ChartCard title="Debt stock and real wage">
+          <ChartCard title="Долг и реальная зарплата">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={visible} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke={PALETTE.line} strokeDasharray="3 3" />
@@ -252,17 +252,17 @@ export function Simulator() {
                 <YAxis tick={{ fill: PALETTE.muted, fontSize: 12 }} width={44} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="debt" name="Debt" stroke={PALETTE.signal} dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="realWage" name="Real wage" stroke={PALETTE.teal} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="debt" name="Долг" stroke={PALETTE.signal} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="realWage" name="Реальная зарплата" stroke={PALETTE.teal} dot={false} strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
         </div>
 
         <p className="text-sm text-muted">
-          Indexes start at 100 in 1990. A higher asset sink keeps more of the new money in stocks and housing, so
-          shop-price inflation stays quieter — until productivity fails to keep up, or the sink is shallow, as in the
-          Russian baseline. Migration adds both shoppers and workers. Inflation here is the indirect tax on cash.
+          Индексы равны 100 в 1990 году. Чем выше сток в активы, тем больше новых денег остаётся в акциях и жилье,
+          и тем тише инфляция в магазине — пока производительность не отстаёт или сток не мелкий, как в российском
+          базовом пути. Миграция добавляет и покупателей, и работников. Инфляция здесь — косвенный налог на наличные.
         </p>
       </section>
     </div>

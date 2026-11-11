@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "Liquidity Atlas";
+const APP_NAME = "Атлас ликвидности";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -13,8 +13,7 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content:
-          "Replay 1990–2050 for the United States, Russia, Europe and China. Money, markets, inflation.",
+        content: "Прогон 1990–2050 для США, России, Европы и Китая. Деньги, рынки, инфляция.",
       },
       { name: "theme-color", content: "#102029" },
     ],
@@ -30,7 +29,7 @@ export const Route = createRootRoute({
 
 function Root() {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
@@ -41,19 +40,19 @@ function Root() {
             <header className="border-b border-line bg-surface/80 backdrop-blur-sm">
               <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <Link to="/" className="group flex items-baseline gap-3">
-                  <span className="font-display text-xl font-semibold text-ink">Liquidity Atlas</span>
+                  <span className="font-display text-xl font-semibold text-ink">Атлас ликвидности</span>
                   <span className="hidden text-sm text-muted sm:inline">1990 → 2050</span>
                 </Link>
                 <nav className="flex gap-1 text-sm font-semibold">
-                  <NavLink to="/">Replay</NavLink>
-                  <NavLink to="/analysis">Theory</NavLink>
-                  <NavLink to="/models">Four economies</NavLink>
+                  <NavLink to="/">Модель</NavLink>
+                  <NavLink to="/analysis">Теория</NavLink>
+                  <NavLink to="/models">Экономики</NavLink>
                 </nav>
               </div>
             </header>
             <Outlet />
             <footer className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted">
-              Illustrative model of money, absorption and real output. Not a forecast and not investment advice.
+              Иллюстративная модель денег, поглощения и реального выпуска. Не прогноз и не инвестиционный совет.
             </footer>
           </div>
         </AuthProvider>

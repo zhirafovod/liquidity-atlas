@@ -28,27 +28,27 @@ export const REGIONS: {
 }[] = [
   {
     id: "usa",
-    name: "United States",
-    blurb: "Deep equity markets soak up a large share of new money before it reaches the checkout.",
-    sink: "Stocks & housing",
+    name: "США",
+    blurb: "Глубокие фондовые рынки впитывают большую долю новых денег ещё до кассы.",
+    sink: "Акции и жильё",
   },
   {
     id: "russia",
-    name: "Russia",
-    blurb: "Shallow capital markets. Extra rubles hit apartments, construction, then shop prices.",
-    sink: "Real estate",
+    name: "Россия",
+    blurb: "Мелкие рынки капитала. Лишние рубли бьют по квартирам, стройке, потом по ценам в магазине.",
+    sink: "Недвижимость",
   },
   {
     id: "europe",
-    name: "Europe",
-    blurb: "QE plus outside migration expands demand and the labor force together.",
-    sink: "Housing & bonds",
+    name: "Европа",
+    blurb: "QE и миграция извне вместе расширяют спрос и рабочую силу.",
+    sink: "Жильё и облигации",
   },
   {
     id: "china",
-    name: "China",
-    blurb: "Very fast money growth, mostly parked in property and investment until capacity bites.",
-    sink: "Property",
+    name: "Китай",
+    blurb: "Очень быстрый рост денег, в основном в недвижимости и инвестициях, пока не упирается в мощности.",
+    sink: "Недвижимость",
   },
 ];
 
@@ -88,35 +88,35 @@ export const BASELINES: Record<RegionId, Params> = {
 };
 
 export const PRESETS: { id: string; label: string; hint: string; patch: Partial<Params> }[] = [
-  { id: "path", label: "Baseline path", hint: "Each region's own post-2000 character", patch: {} },
+  { id: "path", label: "Базовый путь", hint: "Характер каждого региона после 2000 года", patch: {} },
   {
     id: "print",
-    label: "Open the press",
-    hint: "Faster money, bigger fiscal impulse",
+    label: "Открыть станок",
+    hint: "Быстрее деньги, сильнее фискальный импульс",
     patch: { moneyGrowth: 14, fiscalImpulse: 6 },
   },
   {
     id: "ai",
-    label: "AI productivity",
-    hint: "Robots raise real output after 2020",
+    label: "ИИ и производительность",
+    hint: "Роботы поднимают реальный выпуск после 2020",
     patch: { aiBoost: 3.4, productivity: 2.4 },
   },
   {
     id: "sink",
-    label: "Deep stock sink",
-    hint: "Almost all excess liquidity stays in assets",
+    label: "Глубокий сток",
+    hint: "Почти вся лишняя ликвидность остаётся в активах",
     patch: { absorption: 0.9 },
   },
   {
     id: "goods",
-    label: "No financial sink",
-    hint: "New money bids for groceries and rent",
+    label: "Нет финансового стока",
+    hint: "Новые деньги торгуются за еду и аренду",
     patch: { absorption: 0.08 },
   },
   {
     id: "people",
-    label: "Migration surge",
-    hint: "More consumers and more workers",
+    label: "Всплеск миграции",
+    hint: "Больше потребителей и больше работников",
     patch: { immigration: 1.4 },
   },
 ];
